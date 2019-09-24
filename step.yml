@@ -103,6 +103,7 @@ inputs:
         AWS Access Key ID
       is_expand: true
       is_required: true
+      is_sensitive: true
   - aws_secret_access_key: "$AWS_SECRET_ACCESS_KEY"
     opts:
       title: ""
@@ -129,7 +130,7 @@ inputs:
         Usually you may use the default value ($BITRISE_SOURCE_DIR).
       is_expand: true
       is_required: true
-  - runtime: python3.7
+  - runtime:
     opts:
       title: "The location of the source code to be deployed."
       summary: The location of the source code to be deployed.
@@ -138,7 +139,7 @@ inputs:
 
         Usually you may use the default value ($BITRISE_SOURCE_DIR).
       is_expand: true
-      is_required: true
+      is_required: false
       value_options:
         - python2.7
         - python3.6
@@ -157,21 +158,15 @@ inputs:
       is_expand: true
       skip_if_empty: true
       is_required: false
-
-  - stage: production
+  - stage:
     opts:
-      title: "The location of the source code to be deployed."
-      summary: The location of the source code to be deployed.
+      title: "The stage name"
+      summary: The stage name
       description: |
-        The location of the source code to be deployed.
-
-        Usually you may use the default value ($BITRISE_SOURCE_DIR).
+        The stage name
       is_expand: true
-      is_required: true
-      value_options:
-        - dev
-        - staging
-        - production
+      is_required: false
+
 
 outputs:
   - API_GATEWAY_URL:
