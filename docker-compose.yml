@@ -1,0 +1,19 @@
+# A helper for testing
+#
+version: "3.7"
+services:
+  zappa:
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    hostname: zappa
+    environment:
+      - APP_DIR=${APP_DIR:?"APP_DIR variable missing. Set to point to the root directory of your Django app."}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:?"Missing a required variable `AWS_ACCESS_KEY_ID`"}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:?"Missing a required variable `AWS_SECRET_ACCESS_KEY`"}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:?"Missing a required variable `AWS_DEFAULT_REGION`"}
+      - PROJECT_NAME=${PROJECT_NAME:?"Missing a required variable `PROJECT_NAME`"}
+    volumes:
+      - ${APP_DIR}:/var/task
+

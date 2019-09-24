@@ -1,0 +1,188 @@
+# Bitrise step definition
+#
+# A couple of useful guides & docs:
+#
+# - Main Bitrise CLI docs: https://github.com/bitrise-io/bitrise/tree/master/_docs
+# - Step Development Guideline: https://github.com/bitrise-io/bitrise/blob/master/_docs/step-development-guideline.md
+# - Bitrise.yml format spec: https://github.com/bitrise-io/bitrise/blob/master/_docs/bitrise-yml-format-spec.md
+# - Bitrise docs: http://devcenter.bitrise.io/
+# - Bitrise CLI guides: http://devcenter.bitrise.io/bitrise-cli/
+
+title: |-
+  Deploy Django application to AWS Lambda
+summary: |
+  Deploy a Django application to AWS Lambda
+description: |
+  Deploy a Django application as serverless to AWS Lambda using Zappa.
+website: https://github.com/BuddyHC/bitrise-step-deploy-django-application-to-aws-lambda
+source_code_url: https://github.com/BuddyHC/bitrise-step-deploy-django-application-to-aws-lambda
+support_url: https://github.com/BuddyHC/bitrise-step-deploy-django-application-to-aws-lambda/issues
+host_os_tags:
+  - osx-10.10
+  - ubuntu-16.04
+
+# If this step should be available only for certain project types
+# just uncomment this `project_type_tags` section and include all the
+# project types supported by the step. If the step can be used for all
+# project types then you can just remove this section.
+# If no `project_type_tags` specified (or specified as an empty array)
+# that means the step can be used for any project type.
+# You can find more information about project type tags in the Step Development Guideline:
+# https://github.com/bitrise-io/bitrise/blob/master/_docs/step-development-guideline.md
+#
+# project_type_tags:
+#   - ios
+#   - macos
+#   - android
+#   - xamarin
+#   - react-native
+#   - cordova
+#   - ionic
+
+# Type tags are used for categorizing steps, for easier step discovery in Step Libraries.
+# You can find more information about type tags in the Step Development Guideline:
+# https://github.com/bitrise-io/bitrise/blob/master/_docs/step-development-guideline.md
+type_tags:
+  - deploy
+
+is_requires_admin_user: true
+is_always_run: false
+is_skippable: false
+run_if: ""
+
+deps:
+  brew:
+  - name: git
+  - name: wget
+  apt_get:
+  - name: git
+  - name: wget
+
+
+toolkit:
+  bash:
+    entry_file: step.sh
+
+
+inputs:
+  - aws_default_region: "$AWS_DEFAULT_REGION"
+    opts:
+      title: "AWS region"
+      summary: AWS default region e.g. eu-central-1
+      description: |
+        The AWS region the app is to be deployed
+
+        https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions
+      is_expand: true
+      is_required: true
+      value_options:
+        - us-east-1
+        - us-east-2
+        - us-west-1
+        - us-west-2
+        - ca-central-1
+        - eu-central-1
+        - eu-west-1
+        - eu-west-2
+        - eu-west-3
+        - eu-north-1
+        - ap-east-1
+        - ap-northeast-1
+        - ap-northeast-2
+        - ap-northeast-3
+        - ap-southeast-1
+        - ap-southeast-2
+        - ap-south-1
+        - me-south-1
+        - sa-east-1
+  - aws_access_key_id: "$AWS_ACCESS_KEY_ID"
+    opts:
+      title: "AWS Access Key ID"
+      summary: AWS Access Key ID
+      description: |
+        AWS Access Key ID
+      is_expand: true
+      is_required: true
+  - aws_secret_access_key: "$AWS_SECRET_ACCESS_KEY"
+    opts:
+      title: ""
+      summary:
+      description: |
+      is_expand: true
+      is_required: true
+      is_sensitive: true
+  - project_name:
+    opts:
+      title: "Project name on AWS Lambda"
+      summary: Project name on AWS Lambda
+      description: |
+        Project name on AWS Lambda
+      is_expand: true
+      is_required: true
+  - app_dir: "$BITRISE_SOURCE_DIR"
+    opts:
+      title: "The location of the source code to be deployed."
+      summary: The location of the source code to be deployed.
+      description: |
+        The location of the source code to be deployed.
+
+        Usually you may use the default value ($BITRISE_SOURCE_DIR).
+      is_expand: true
+      is_required: true
+  - runtime: python3.7
+    opts:
+      title: "The location of the source code to be deployed."
+      summary: The location of the source code to be deployed.
+      description: |
+        The location of the source code to be deployed.
+
+        Usually you may use the default value ($BITRISE_SOURCE_DIR).
+      is_expand: true
+      is_required: true
+      value_options:
+        - python2.7
+        - python3.6
+        - python3.7
+  - django_settings:
+    opts:
+      title: "The modular path to your Django project's settings"
+      summary: The modular path to your Django project's settings.
+      description: |
+        The modular path to your Django project's settings.
+        The step tries to auto-detect the right one
+        but in case it fails you need to define it manually.
+
+        example
+        your_project.production_settings
+      is_expand: true
+      skip_if_empty: true
+      is_required: false
+
+  - stage: production
+    opts:
+      title: "The location of the source code to be deployed."
+      summary: The location of the source code to be deployed.
+      description: |
+        The location of the source code to be deployed.
+
+        Usually you may use the default value ($BITRISE_SOURCE_DIR).
+      is_expand: true
+      is_required: true
+      value_options:
+        - dev
+        - staging
+        - production
+
+outputs:
+  - API_GATEWAY_URL:
+    opts:
+      title: "What is the URL of the deployed app"
+      summary: What is the URL of the deployed app
+      description: |
+        What is the URL of the deployed app
+  - DOMAIN_URL:
+    opts:
+      title: "What is the URL of the deployed app"
+      summary: What is the URL of the deployed app
+      description: |
+        What is the URL of the deployed app
