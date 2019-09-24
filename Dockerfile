@@ -1,9 +1,9 @@
-ARG RUNTIME=python3.7
-FROM lambci/lambda:build-${RUNTIME}
+ARG input_runtime=python3.7
+FROM lambci/lambda:build-${input_runtime}
 
-# A trick to inherit the `RUNTIME` variable defined before the `FROM` step
-ARG RUNTIME
-ENV RUNTIME=${RUNTIME}
+# A trick to inherit the `input_runtime` variable defined before the `FROM` step
+ARG input_runtime
+ENV input_runtime=${input_runtime}
 
 WORKDIR /var/task
 

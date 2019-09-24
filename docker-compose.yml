@@ -9,11 +9,11 @@ services:
       dockerfile: Dockerfile
     hostname: zappa
     environment:
-      - APP_DIR=${APP_DIR:?"APP_DIR variable missing. Set to point to the root directory of your Django app."}
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:?"Missing a required variable `AWS_ACCESS_KEY_ID`"}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:?"Missing a required variable `AWS_SECRET_ACCESS_KEY`"}
-      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:?"Missing a required variable `AWS_DEFAULT_REGION`"}
-      - PROJECT_NAME=${PROJECT_NAME:?"Missing a required variable `PROJECT_NAME`"}
+      - input_app_dir=${input_app_dir:?"input_app_dir variable missing. Set to point to the root directory of your Django app."}
+      - input_aws_access_key_id=${input_aws_access_key_id:?"Missing a required variable `input_aws_access_key_id`"}
+      - input_aws_secret_access_key=${input_aws_secret_access_key:?"Missing a required variable `input_aws_secret_access_key`"}
+      - input_aws_default_region=${input_aws_default_region:?"Missing a required variable `input_aws_default_region`"}
+      - input_project_name=${input_project_name:?"Missing a required variable `input_project_name`"}
     volumes:
-      - ${APP_DIR}:/var/task
+      - ${input_app_dir}:/var/task
 

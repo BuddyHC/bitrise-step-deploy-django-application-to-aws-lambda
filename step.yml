@@ -65,7 +65,7 @@ toolkit:
 
 
 inputs:
-  - aws_default_region: "$AWS_DEFAULT_REGION"
+  - input_aws_default_region: "$AWS_DEFAULT_REGION"
     opts:
       title: "AWS region"
       summary: AWS default region e.g. eu-central-1
@@ -95,7 +95,7 @@ inputs:
         - ap-south-1
         - me-south-1
         - sa-east-1
-  - aws_access_key_id: "$AWS_ACCESS_KEY_ID"
+  - input_aws_access_key_id: "$AWS_ACCESS_KEY_ID"
     opts:
       title: "AWS Access Key ID"
       summary: AWS Access Key ID
@@ -104,7 +104,7 @@ inputs:
       is_expand: true
       is_required: true
       is_sensitive: true
-  - aws_secret_access_key: "$AWS_SECRET_ACCESS_KEY"
+  - input_aws_secret_access_key: "$AWS_SECRET_ACCESS_KEY"
     opts:
       title: ""
       summary:
@@ -112,7 +112,7 @@ inputs:
       is_expand: true
       is_required: true
       is_sensitive: true
-  - project_name:
+  - input_project_name: "$BITRISEIO_GIT_REPOSITORY_OWNER-$BITRISE_APP_TITLE"
     opts:
       title: "Project name on AWS Lambda"
       summary: Project name on AWS Lambda
@@ -120,22 +120,23 @@ inputs:
         Project name on AWS Lambda
       is_expand: true
       is_required: true
-  - app_dir: "$BITRISE_SOURCE_DIR"
+  - input_app_dir: "$BITRISE_SOURCE_DIR"
     opts:
       title: "The location of the source code to be deployed."
-      summary: The location of the source code to be deployed.
+      summary: The location of the source code to be deployed. Usually you may use the default value ($BITRISE_SOURCE_DIR).
       description: |
         The location of the source code to be deployed.
-
-        Usually you may use the default value ($BITRISE_SOURCE_DIR).
       is_expand: true
       is_required: true
-  - runtime:
+  - input_runtime:
     opts:
-      title: "The runtime type and version"
-      summary: The runtime type and version.
+      title: "(Optional) The runtime type and version"
+      summary: The runtime type and version. Leave `null` for auto-detect.
       description: |
         The runtime type and version.
+
+        One of the supported
+        https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
 
         The runtime version is auto detected from the `Pipfile`.
 
@@ -146,9 +147,9 @@ inputs:
         - python2.7
         - python3.6
         - python3.7
-  - django_settings:
+  - input_django_settings:
     opts:
-      title: "The modular path to your Django project's settings"
+      title: "(Optional) The modular path to your Django project's settings"
       summary: The modular path to your Django project's settings.
       description: |
         The modular path to your Django project's settings.
@@ -160,9 +161,9 @@ inputs:
       is_expand: true
       skip_if_empty: true
       is_required: false
-  - stage:
+  - input_stage: "$BITRISE_GIT_BRANCH"
     opts:
-      title: "The stage name"
+      title: "(Optional) The stage name"
       summary: The stage name
       description: |
         The stage name
