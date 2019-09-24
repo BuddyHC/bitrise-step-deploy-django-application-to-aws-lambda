@@ -2,6 +2,8 @@
 
 set -ebuo pipefail
 
+cd $BITRISE_STEP_SOURCE_DIR
+
 # A compability trick converting `INPUT_` prefixed environment variable names in the lower case form.
 for var in $(awk 'BEGIN{for(v in ENVIRON) print v}' | grep '^INPUT_')
 do
