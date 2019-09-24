@@ -132,12 +132,14 @@ inputs:
       is_required: true
   - runtime:
     opts:
-      title: "The location of the source code to be deployed."
-      summary: The location of the source code to be deployed.
+      title: "The runtime type and version"
+      summary: The runtime type and version.
       description: |
-        The location of the source code to be deployed.
+        The runtime type and version.
 
-        Usually you may use the default value ($BITRISE_SOURCE_DIR).
+        The runtime version is auto detected from the `Pipfile`.
+
+        If the auto detect fails you may need to set this manually.
       is_expand: true
       is_required: false
       value_options:
