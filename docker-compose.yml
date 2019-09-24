@@ -1,6 +1,6 @@
 # A helper for testing
 #
-version: "3.7"
+version: "3.3"
 services:
   zappa:
     tty: true
