@@ -14,6 +14,8 @@ services:
       - input_aws_secret_access_key=${input_aws_secret_access_key:?"Missing a required variable `input_aws_secret_access_key`"}
       - input_aws_default_region=${input_aws_default_region:?"Missing a required variable `input_aws_default_region`"}
       - input_project_name=${input_project_name:?"Missing a required variable `input_project_name`"}
+      - input_stage
+      # TODO: Pass somehow the rest of the optional settings: `input_django_settings` and `input_runtime`
     volumes:
       - ${input_app_dir}:/var/task
 

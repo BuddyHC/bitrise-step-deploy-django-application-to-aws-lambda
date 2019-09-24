@@ -9,6 +9,7 @@ Utilizes Zappa (https://pypi.org/project/zappa/).
 ## TODO
 
 All the current todos are documented in the code:
+
 ```bash
 rg TODO
 ```
