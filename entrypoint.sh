@@ -10,6 +10,7 @@ zappa_settings () {
 
         [[ -z "${input_django_settings-}" ]] && export input_django_settings=$(python -c "from zappa.utilities import detect_django_settings; print(detect_django_settings()[0])")
         [[ -z "${input_stage-}" ]] && export input_stage="production"
+        input_stage=${${input_stage//[ -]/_}//[^a-zA-Z0-9_]/} # API stage names must match [a-zA-Z0-9_]. Sanitizing.
         python > zappa_settings.json << END
 from string import Template
 from os import environ as env
