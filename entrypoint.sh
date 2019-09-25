@@ -51,7 +51,8 @@ case $1 in
         zappa_settings
         DATABASE_URL=postgresql://fakeuser:fakepass@fakehost/fakedb?sslmode=require SECRET_KEY=fakesecret pipenv run python manage.py collectstatic --noinput # TODO: Allow Django collectstatic command to be run without ENV variables set when run locally.
         pipenv run zappa deploy $input_stage || pipenv run zappa update $input_stage # TODO: Implement a smarter check if Zappa needs to run deploy or update
-        # TODO: Run Django migrations after deployment
+        # TODO: Could API Gateway 30 second timeout be avoided with Django migration (see: https://github.com/Miserlou/Zappa#django-management-commands) ?
+        zappa manage $input_stage migrate || true
         ;;
     undeploy)
         zappa_settings

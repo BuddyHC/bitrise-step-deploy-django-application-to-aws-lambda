@@ -7,7 +7,10 @@ ENV input_runtime=${input_runtime}
 
 WORKDIR /var/task
 
-RUN pip install --upgrade pip && pip install zappa pipenv
+RUN pip install --upgrade pip && pip install zappa pipenv lambda-packages
+
+# TODO: Install additional OS packages depending only on the needs
+RUN yum install -y mysql56-devel
 
 COPY entrypoint.sh /usr/bin/entrypoint.sh
 
