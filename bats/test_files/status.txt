@@ -1,0 +1,23 @@
+Status for [1mtest-deploy-django-zappa-testing[0m:
+[32m	Lambda Versions[0m:      2
+[32m	Lambda Name[0m:          test-deploy-django-zappa-testing
+[32m	Lambda ARN[0m:           arn:aws:lambda:eu-central-1:123456789012:function:test-deploy-django-zappa-testing
+[32m	Lambda Role ARN[0m:      arn:aws:iam::123456789012:role/test-deploy-django-zappa-testing-ZappaLambdaExecutionRole
+[32m	Lambda Handler[0m:       handler.lambda_handler
+[32m	Lambda Code Size[0m:     15461718
+[32m	Lambda Version[0m:       $LATEST
+[32m	Lambda Last Modified[0m: 2019-09-23T20:42:41.044+0000
+[32m	Lambda Memory Size[0m:   512
+[32m	Lambda Timeout[0m:       30
+[32m	Lambda Runtime[0m:       python3.7
+[32m	Lambda VPC ID[0m:        None
+[32m	Invocations (24h)[0m:    0
+[32m	Errors (24h)[0m:         0
+[32m	Error Rate (24h)[0m:     Error calculating
+[32m	API Gateway URL[0m:      https://wbous3xxwh.execute-api.eu-central-1.amazonaws.com/testing
+[32m	Domain URL[0m:           None Supplied
+[32m	Num. Event Rules[0m:     1
+[32m	Event Rule Name[0m:      9d684c56ef70b26b65f11e1bd6e4eb74b4492-handler.keep_warm_callback
+[32m	Event Rule Schedule[0m:  rate(4 minutes)
+[32m	Event Rule State[0m:     Enabled
+[32m	Event Rule ARN[0m:       arn:aws:events:eu-central-1:123456789012:rule/9d684c56ef70b26b65f11e1bd6e4eb74b4492-handler.keep_warm_callback

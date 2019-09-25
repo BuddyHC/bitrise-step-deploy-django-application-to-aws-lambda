@@ -184,3 +184,9 @@ outputs:
       summary: What is the URL of the deployed app
       description: |
         What is the URL of the deployed app
+  - LAMBDA_NAME:
+    opts:
+      title: "Name of the deployed Lambda function"
+      summary: Name of the deployed Lambda function
+      description: |
+        Name of the deployed Lambda function

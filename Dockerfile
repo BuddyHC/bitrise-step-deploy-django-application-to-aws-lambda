@@ -13,6 +13,7 @@ RUN pip install --upgrade pip && pip install zappa pipenv lambda-packages
 RUN yum install -y mysql56-devel
 
 COPY entrypoint.sh /usr/bin/entrypoint.sh
+COPY functions.sh /usr/bin/functions.sh
 
 ENTRYPOINT [ "/usr/bin/entrypoint.sh" ]
 CMD ["deploy"]

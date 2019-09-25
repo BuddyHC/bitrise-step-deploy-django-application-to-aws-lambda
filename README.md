@@ -4,7 +4,20 @@ EXPERIMENTAL
 
 Bitrise steps for deploying a Django application as serverless to AWS Lambda.
 
-Utilizes Zappa (https://pypi.org/project/zappa/).
+Utilizes [Zappa](https://pypi.org/project/zappa/).
+
+## Using this step
+
+1. Configure the related services e.g.
+  * RDS for the database
+  * CloudFront for serving the static files
+2. Pick up the Lambda function name and head to AWS console or use the AWS CLI tool to configure your application's environment variables:
+```bash
+aws lambda update-function-configuration --function-name $LAMBDA_NAME --environment Variables={SECRET_KEY=xxx}
+aws lambda update-function-configuration --function-name $LAMBDA_NAME --environment Variables={DATABASE_URL=xxx}
+aws lambda update-function-configuration --function-name $LAMBDA_NAME --environment Variables={DJANGO_STATIC_HOST=xxx}
+```
+3. Deploy your application. The first deployment may fail with the `502` error because of the misconfigurations so check step 2 again.
 
 ## TODO
 

@@ -4,20 +4,9 @@ set -ebuo pipefail
 
 cd $BITRISE_STEP_SOURCE_DIR
 
-# A compability trick converting `INPUT_` prefixed environment variable names in the lower case form.
-for var in $(awk 'BEGIN{for(v in ENVIRON) print v}' | grep '^INPUT_')
-do
-    var_lower_case=$(echo $var | tr '[:upper:]' '[:lower:]')
-    value=$(printenv $var)
-    declare "$var_lower_case=$value"
-done
+source functions.sh
 
-get_runtime () {
-    python_version=$(cat ${input_app_dir}/Pipfile | grep python_version | grep -o '[0-9].[0-9]') #todo: version number could be more versatile
-    echo "python${python_version}"
-}
-
-: ${input_runtime:=$(get_runtime)}
+: ${input_runtime:=$(get_runtime "./test-project/Pipfile")}
 docker-compose build --build-arg input_runtime=${input_runtime} zappa
 docker-compose run --rm zappa
 
@@ -26,8 +15,9 @@ docker-compose run --rm zappa
 #  envman, which is automatically installed by `bitrise setup`.
 
 status=$(docker-compose run --rm zappa status)
-api_gateway_url=$(echo "${status}" | grep "API Gateway URL" | xargs | cut -d':' -f2,3 | tr -d ' \r')
-domain_url=$(echo "${status}" | grep "Domain URL" | xargs | cut -d':' -f2,3 | tr -d ' \r')
+api_gateway_url=$(get_status_variable "${status}" "API Gateway URL")
+domain_url=$(get_status_variable "${status}" "Domain URL")
+lambda_name=$(get_status_variable "${status}" "Lambda Name")
 
 # Envman can handle piped inputs, which is useful if the text you want to
 # share is complex and you don't want to deal with proper bash escaping:
@@ -40,6 +30,9 @@ echo ::set-output name=API_GATEWAY_URL::"${api_gateway_url}"
 
 envman add --key DOMAIN_URL --value "${domain_url}"
 echo ::set-output name=DOMAIN_URL::"${domain_url}"
+
+envman add --key LAMBDA_NAME --value "${lambda_name}"
+echo ::set-output name=LAMBDA_NAME::"${lambda_name}"
 
 #
 # --- Exit codes:

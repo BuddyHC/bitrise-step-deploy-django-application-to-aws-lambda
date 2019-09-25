@@ -2,40 +2,26 @@
 
 set -ebuo pipefail
 
+source functions.sh
+
 zappa_settings () {
-        # AWS settings
-        export AWS_ACCESS_KEY_ID=$input_aws_access_key_id
-        export AWS_SECRET_ACCESS_KEY=$input_aws_secret_access_key
-        export AWS_DEFAULT_REGION=$input_aws_default_region
+    # AWS settings
+    export AWS_ACCESS_KEY_ID=$input_aws_access_key_id
+    export AWS_SECRET_ACCESS_KEY=$input_aws_secret_access_key
+    export AWS_DEFAULT_REGION=$input_aws_default_region
 
-        [[ -z "${input_django_settings-}" ]] && export input_django_settings=$(python -c "from zappa.utilities import detect_django_settings; print(detect_django_settings()[0])")
-        [[ -z "${input_stage-}" ]] && export input_stage="production"
-        input_stage=${${input_stage//[ -]/_}//[^a-zA-Z0-9_]/} # API stage names must match [a-zA-Z0-9_]. Sanitizing.
-        python > zappa_settings.json << END
-from string import Template
-from os import environ as env
-
-t = '''{
-    "$input_stage": {
-        "project_name": "$input_project_name",
-        "runtime": "$input_runtime",
-        "django_settings": "$input_django_settings"
-    }
-}'''
-
-s = Template(t)
-
-print(s.safe_substitute(env))
-END
-# TODO: Replace the Python based zappa settings template with something more sophesticated?
+    [[ -z "${input_django_settings-}" ]] && export input_django_settings=$(python -c "from zappa.utilities import detect_django_settings; print(detect_django_settings()[0])")
+    [[ -z "${input_stage-}" ]] && export input_stage="production"
+    create_zappa_settings_json_file "zappa_settings.json"
+    input_stage=$(sanitize "$input_stage")
 }
 
 zappa_init () {
-        export PIPENV_VENV_IN_PROJECT=true
-        pipenv run pipenv install --deploy
-        pipenv run pip install zappa Werkzeug
-        export VIRTUAL_ENV=.venv
-        # TODO: Get rid of `Courtesy Notice: Pipenv found itself running within a virtual environment, so it will automatically use that environment, instead of creating its own for any project. You can set PIPENV_IGNORE_VIRTUALENVS=1 to force pipenv to ignore that environment and create its own instead. You can set PIPENV_VERBOSITY=-1 to suppress this warning.`
+    export PIPENV_VENV_IN_PROJECT=true
+    pipenv run pipenv install --deploy
+    pipenv run pip install zappa Werkzeug
+    export VIRTUAL_ENV=.venv
+    # TODO: Get rid of `Courtesy Notice: Pipenv found itself running within a virtual environment, so it will automatically use that environment, instead of creating its own for any project. You can set PIPENV_IGNORE_VIRTUALENVS=1 to force pipenv to ignore that environment and create its own instead. You can set PIPENV_VERBOSITY=-1 to suppress this warning.`
 }
 
 case $1 in
@@ -58,6 +44,7 @@ case $1 in
     undeploy)
         zappa_settings
         (yes || true) | zappa undeploy $input_stage
+        # TODO: Undeploy should deploy more than just the Lambda function including the S3 bucket etc.?
         ;;
     status)
         zappa_settings
