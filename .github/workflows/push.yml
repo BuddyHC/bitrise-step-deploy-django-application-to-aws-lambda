@@ -9,6 +9,6 @@ jobs:
         run: |
             #!/bin/bash
             sudo add-apt-repository ppa:duggan/bats
-            sudo apt-get update
-            sudo apt-get install bats
+            sudo apt-get update -q
+            sudo apt-get install -q bats
             bats --tap bats
