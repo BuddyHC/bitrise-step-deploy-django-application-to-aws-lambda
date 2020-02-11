@@ -22,7 +22,7 @@ aws lambda update-function-configuration --function-name $LAMBDA_NAME --environm
 
 ## TODO
 
-All the current [todos](search?q=TODO&unscoped_q=TODO) are documented in the code:
+All the current [todos](../../search?q=TODO&unscoped_q=TODO) are documented in the code:
 
 ```bash
 rg TODO
