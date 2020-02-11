@@ -1,0 +1,14 @@
+name: Test
+on: push
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run bats tests
+        run: |
+            #!/bin/bash
+            sudo add-apt-repository ppa:duggan/bats
+            sudo apt-get update
+            sudo apt-get install bats
+            bats --tap bats
