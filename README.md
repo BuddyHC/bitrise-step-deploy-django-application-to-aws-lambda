@@ -8,24 +8,26 @@ Utilizes [Zappa](https://pypi.org/project/zappa/).
 
 ## Using this step
 
-1. Configure the related services e.g.
-  * RDS for the database
-  * CloudFront for serving the static files
+1. Configure the related services you need in your application for example:
+  * RDS for the database (for the `DATABASE_URL`)
+  * CloudFront for serving the static files (for the `DJANGO_STATIC_HOST`)
 2. Pick up the Lambda function name and head to AWS console or use the AWS CLI tool to configure your application's environment variables:
 ```bash
 aws lambda update-function-configuration --function-name $LAMBDA_NAME --environment Variables={SECRET_KEY=xxx}
 aws lambda update-function-configuration --function-name $LAMBDA_NAME --environment Variables={DATABASE_URL=xxx}
 aws lambda update-function-configuration --function-name $LAMBDA_NAME --environment Variables={DJANGO_STATIC_HOST=xxx}
 ```
-3. Deploy your application. The first deployment may fail with the `502` error because of the misconfigurations so check step 2 again.
+3. Create the AWS credentials and associate the AWS IAM policy for example: (aws-iam-policy-for-zappa.json)
+4. Deploy your application. The first deployment may fail with the `502` error because of the misconfigurations so check step 2 again.
 
 ## TODO
 
-All the current todos are documented in the code:
+All the current todos (search?q=TODO&unscoped_q=TODO) are documented in the code:
 
 ```bash
 rg TODO
 ```
+
 
 ## How to test this step
 
@@ -63,3 +65,22 @@ Step by step:
   * direct git URL format: instead of `- original-step-id:` use `- git::https://github.com/user/step.git@branch:`
   * You can find more example of alternative step referencing at: https://github.com/bitrise-io/bitrise/blob/master/_examples/tutorials/steps-and-workflows/bitrise.yml
 7. Once you're done just commit your changes & create a Pull Request
+
+
+## Using with Github actions
+
+An example of a step configuration you need to your Github workflow definition:
+
+```yaml
+steps:
+- uses: actions/checkout@v1
+- name: Deploy to AWS Lambda
+  uses: BuddyHC/bitrise-step-deploy-django-application-to-aws-lambda@master
+  with:
+    aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    aws_default_region: eu-central-1
+    project_name: project-name-on-lambda
+    stage: dev
+    runtime: python3.7
+```
