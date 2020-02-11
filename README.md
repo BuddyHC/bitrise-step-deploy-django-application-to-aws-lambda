@@ -17,7 +17,7 @@ aws lambda update-function-configuration --function-name $LAMBDA_NAME --environm
 aws lambda update-function-configuration --function-name $LAMBDA_NAME --environment Variables={DATABASE_URL=xxx}
 aws lambda update-function-configuration --function-name $LAMBDA_NAME --environment Variables={DJANGO_STATIC_HOST=xxx}
 ```
-3. Create the AWS credentials and associate the AWS IAM policy for example: (aws-iam-policy-for-zappa.json)
+3. Create the AWS credentials and associate the AWS IAM policy for [example](aws-iam-policy-for-zappa.json).
 4. Deploy your application. The first deployment may fail with the `502` error because of the misconfigurations so check step 2 again.
 
 ## TODO
