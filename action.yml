@@ -1,0 +1,106 @@
+# https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions
+name: 'Deploy Django application to AWS Lambda'
+author: 'Buddy Healthcare Ltd Oy'
+description: 'A Github Action to deploy a Django application as serverless to AWS Lambda using the Zappa framework.'
+
+branding:
+  icon: 'cloud'
+  color: 'orange'
+
+# https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions#inputs
+# https://help.github.com/en/actions/reference/contexts-and-expression-syntax-for-github-actions
+inputs:
+  aws_default_region:
+    description: |
+        The AWS region the app is to be deployed which is one of the following
+        - us-east-1
+        - us-east-2
+        - us-west-1
+        - us-west-2
+        - ca-central-1
+        - eu-central-1
+        - eu-west-1
+        - eu-west-2
+        - eu-west-3
+        - eu-north-1
+        - ap-east-1
+        - ap-northeast-1
+        - ap-northeast-2
+        - ap-northeast-3
+        - ap-southeast-1
+        - ap-southeast-2
+        - ap-south-1
+        - me-south-1
+        - sa-east-1
+
+        Please check the AWS documentation for up to date list
+        https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions
+    required: false
+    default: 'eu-central-1'
+  aws_access_key_id:
+    description: |
+        AWS Access Key ID
+    required: true
+  aws_secret_access_key:
+    description: |
+        AWS Secret Access Key
+    required: true
+  project_name:
+    description: |
+        Project name on AWS Lambda.
+    required: false
+    default: ${{ github.repository }}
+  app_dir:
+    description:  |
+        The location of the source code to be deployed.
+    required: false
+    default: ${{ github.workspace }}
+  runtime:
+      description: |
+        (Optional) The runtime type and version.
+
+        One of the supported
+        https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
+
+        The runtime version is auto detected from the `Pipfile`.
+
+        TODO: Currently does not support Pipefile.lock and other package management systems than Pipenv.
+
+        If the auto detect fails you may need to set this manually.
+      required: false
+  django_settings:
+    description: |
+        (Optional) The modular path to your Django project's settings.
+        The step tries to auto-detect the right one
+        but in case it fails you need to define it manually.
+
+        example
+        your_django_project_folder.settings
+    required: false
+  stage:
+    description:  |
+        (Optional) The stage name
+    required: false
+    default: ${{ github.ref }}
+  s3_bucket_name:
+    description:  |
+        (Optional) The stage name
+    required: false
+    default: zappa-${{ github.repository }}-
+
+outputs:
+  API_GATEWAY_URL:
+    description: |
+        What is the URL of the deployed app
+  DOMAIN_URL:
+    description: |
+        What is the URL of the deployed app
+  LAMBDA_NAME:
+    description: |
+        Name of the deployed Lambda function
+
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions/metadata-syntax-for-github-actions#runs
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+# https://help.github.com/en/actions/reference/virtual-environments-for-github-hosted-runners#docker-container-filesystem

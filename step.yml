@@ -13,7 +13,7 @@ title: |-
 summary: |
   Deploy a Django application to AWS Lambda
 description: |
-  Deploy a Django application as serverless to AWS Lambda using Zappa.
+  A Bitrise step to deploy a Django application as serverless to AWS Lambda using Zappa.
 website: https://github.com/BuddyHC/bitrise-step-deploy-django-application-to-aws-lambda
 source_code_url: https://github.com/BuddyHC/bitrise-step-deploy-django-application-to-aws-lambda
 support_url: https://github.com/BuddyHC/bitrise-step-deploy-django-application-to-aws-lambda/issues
@@ -72,6 +72,7 @@ inputs:
       description: |
         The AWS region the app is to be deployed
 
+        Please see check AWS documentation for up to date list
         https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-available-regions
       is_expand: true
       is_required: true
@@ -109,6 +110,7 @@ inputs:
       title: ""
       summary:
       description: |
+        AWS Secret Access Key
       is_expand: true
       is_required: true
       is_sensitive: true
@@ -131,14 +133,16 @@ inputs:
   - input_runtime:
     opts:
       title: "(Optional) The runtime type and version"
-      summary: The runtime type and version. Leave `null` for auto-detect.
+      summary: (Optional) The runtime type and version. Leave `null` for auto-detect.
       description: |
-        The runtime type and version.
+        (Optional) The runtime type and version.
 
         One of the supported
         https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
 
         The runtime version is auto detected from the `Pipfile`.
+
+        TODO: Currently does not support Pipefile.lock and other package management systems than Pipenv.
 
         If the auto detect fails you may need to set this manually.
       is_expand: true
@@ -150,9 +154,9 @@ inputs:
   - input_django_settings:
     opts:
       title: "(Optional) The modular path to your Django project's settings"
-      summary: The modular path to your Django project's settings.
+      summary: (Optional) The modular path to your Django project's settings.
       description: |
-        The modular path to your Django project's settings.
+        (Optional) The modular path to your Django project's settings.
         The step tries to auto-detect the right one
         but in case it fails you need to define it manually.
 
@@ -164,9 +168,17 @@ inputs:
   - input_stage: "$BITRISE_GIT_BRANCH"
     opts:
       title: "(Optional) The stage name"
-      summary: The stage name
+      summary: (Optional) The stage name
       description: |
-        The stage name
+        (Optional) The stage name.
+      is_expand: true
+      is_required: false
+  - input_s3_bucket_name: "zappa-$BITRISEIO_GIT_REPOSITORY_OWNER-$BITRISE_APP_TITLE-$BITRISE_GIT_BRANCH"
+    opts:
+      title: "(Optional) The bucket name storing the Lambda files"
+      summary: (Optional) The bucket name storing the Lambda files
+      description: |
+        (Optional) The bucket name storing the Lambda files.
       is_expand: true
       is_required: false
 

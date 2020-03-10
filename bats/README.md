@@ -1,0 +1,1 @@
+Shell unit tests using [bats](https://github.com/bats-core/bats-core)

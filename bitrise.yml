@@ -68,7 +68,7 @@ workflows:
         is_always_run: true
         inputs:
         - content: |
-            #/bin/bash
+            #!/bin/bash
             # TODO: Check if there is a smarter way to pass input variables to the undeployment of the test deployment
             export input_app_dir=${APP_DIR}
             export input_project_name=${PROJECT_NAME}

@@ -2,34 +2,72 @@
 
 EXPERIMENTAL
 
-Bitrise steps for deploying a Django application as serverless to AWS Lambda.
+Continuous Deliver steps for deploying a Django application as serverless to AWS Lambda.
 
-Utilizes [Zappa](https://pypi.org/project/zappa/).
+This project tries to make deploying an existing Django application to AWS Lambda with minimal effort with the support of both [Github Actions](https://github.com/features/actions) or [Bitrise](https://www.bitrise.io/).
 
-## Using this step
+Utilizes the [Zappa](https://pypi.org/project/zappa/) framework.
+
+## TODOs, known issues and limitations
+
+All the current [todos](../../search?q=TODO&unscoped_q=TODO) are documented in the code.
+
+Or by command line:
+```bash
+rg TODO
+```
+
+## Prerequisites and how to use
 
 1. Configure the related services you need in your application for example:
-  * RDS for the database (for the `DATABASE_URL`)
-  * CloudFront for serving the static files (for the `DJANGO_STATIC_HOST`)
+  * The database (for example AWS RDS database) (to get the `DATABASE_URL`)
+  * CloudFront for serving the static files (for the `DJANGO_STATIC_HOST`). Use for example the [Whitenoise](http://whitenoise.evans.io/en/stable/) library
 2. Pick up the Lambda function name and head to AWS console or use the AWS CLI tool to configure your application's environment variables:
 ```bash
 aws lambda update-function-configuration --function-name $LAMBDA_NAME --environment Variables={SECRET_KEY=xxx}
 aws lambda update-function-configuration --function-name $LAMBDA_NAME --environment Variables={DATABASE_URL=xxx}
 aws lambda update-function-configuration --function-name $LAMBDA_NAME --environment Variables={DJANGO_STATIC_HOST=xxx}
 ```
-3. Create the AWS credentials and associate the AWS IAM policy for [example](aws-iam-policy-for-zappa.json).
+3. Create the AWS credentials and associate the AWS IAM policy for [example](aws-iam-policy-for-zappa.json). TODO: A more strict security policy.
 4. Deploy your application. The first deployment may fail with the `502` error because of the misconfigurations so check step 2 again.
+5. Configure your custom domains in AWS and set the DNS records to point to the API Gateway domain.
 
-## TODO
+## Using with Github Actions
 
-All the current [todos](../../search?q=TODO&unscoped_q=TODO) are documented in the code:
+An example of a step configuration you need to your Github workflow definition:
 
-```bash
-rg TODO
+Example file for the development deployment: `.github/workflows/deploy.yml`
+```yaml
+name: Deploy
+on:
+  push:
+    branches:
+      - development
+      - master
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to AWS Lambda
+        if: github.ref == 'refs/heads/development'
+        uses: BuddyHC/bitrise-step-deploy-django-application-to-aws-lambda@master
+        with:
+          aws_access_key_id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
+      - name: Deploy to AWS Lambda
+        if: github.ref == 'refs/heads/master'
+        uses: BuddyHC/bitrise-step-deploy-django-application-to-aws-lambda@master
+        with:
+          aws_access_key_id: ${{ secrets.PROD_AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.PROD_AWS_SECRET_ACCESS_KEY }}
 ```
 
+Please see [action.yml](action.yml) for additional configuration parameters.
 
-## How to test this step
+## Bitrise
+
+### How to test this step
 
 Can be run directly with the [bitrise CLI](https://github.com/bitrise-io/bitrise),
 just `git clone` this repository, `cd` into it's folder in your Terminal/Command Line
@@ -51,7 +89,7 @@ Step by step:
   ```
 6. Once you have all the required secret parameters in your `.bitrise.secrets.yml` you can just run this step with the [bitrise CLI](https://github.com/bitrise-io/bitrise): `bitrise run test`
 
-## How to contribute to this step
+### How to contribute to this step
 
 1. Fork this repository
 2. `git clone` it
@@ -66,21 +104,6 @@ Step by step:
   * You can find more example of alternative step referencing at: https://github.com/bitrise-io/bitrise/blob/master/_examples/tutorials/steps-and-workflows/bitrise.yml
 7. Once you're done just commit your changes & create a Pull Request
 
+## Community support
 
-## Using with Github actions
-
-An example of a step configuration you need to your Github workflow definition:
-
-```yaml
-steps:
-- uses: actions/checkout@v1
-- name: Deploy to AWS Lambda
-  uses: BuddyHC/bitrise-step-deploy-django-application-to-aws-lambda@master
-  with:
-    aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    aws_default_region: eu-central-1
-    project_name: project-name-on-lambda
-    stage: dev
-    runtime: python3.7
-```
+[Gitter](https://gitter.im/cizappa/)

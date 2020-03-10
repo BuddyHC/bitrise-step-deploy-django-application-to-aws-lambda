@@ -2,6 +2,8 @@
 
 set -ebuo pipefail
 
+cd /github/workspace
+
 source functions.sh
 
 zappa_settings () {
@@ -24,9 +26,28 @@ zappa_init () {
     # TODO: Get rid of `Courtesy Notice: Pipenv found itself running within a virtual environment, so it will automatically use that environment, instead of creating its own for any project. You can set PIPENV_IGNORE_VIRTUALENVS=1 to force pipenv to ignore that environment and create its own instead. You can set PIPENV_VERBOSITY=-1 to suppress this warning.`
 }
 
+zappa_deploy () {
+        zappa_init
+        zappa_settings
+        DATABASE_URL=postgresql://fakeuser:fakepass@fakehost/fakedb?sslmode=require SECRET_KEY=fakesecret pipenv run python manage.py collectstatic --noinput # TODO: Allow Django collectstatic command to be run without ENV variables set when run locally.
+        pipenv run zappa deploy $input_stage || pipenv run zappa update $input_stage # TODO: Implement a smarter check if Zappa needs to run deploy or update
+        # TODO: Could API Gateway 30 second timeout be avoided with Django migration (see: https://github.com/Miserlou/Zappa#django-management-commands) ?
+        zappa manage $input_stage migrate || true
+}
+
+zappa_undeploy () {
+        zappa_settings
+        (yes || true) | zappa undeploy $input_stage
+        # TODO: Undeploy should deploy more than just the Lambda function including the S3 bucket etc.?
+}
+
 case $1 in
     bash)
         exec "$@"
+        ;;
+    bats)
+        #(apk update && apk add bats jq) > /dev/null
+        bats --tap bats
         ;;
     zappa)
         zappa_init
@@ -34,17 +55,10 @@ case $1 in
         exec pipenv run zappa "${@:2}" $input_stage
         ;;
     deploy)
-        zappa_init
-        zappa_settings
-        DATABASE_URL=postgresql://fakeuser:fakepass@fakehost/fakedb?sslmode=require SECRET_KEY=fakesecret pipenv run python manage.py collectstatic --noinput # TODO: Allow Django collectstatic command to be run without ENV variables set when run locally.
-        pipenv run zappa deploy $input_stage || pipenv run zappa update $input_stage # TODO: Implement a smarter check if Zappa needs to run deploy or update
-        # TODO: Could API Gateway 30 second timeout be avoided with Django migration (see: https://github.com/Miserlou/Zappa#django-management-commands) ?
-        zappa manage $input_stage migrate || true
+        zappa_deploy
         ;;
     undeploy)
-        zappa_settings
-        (yes || true) | zappa undeploy $input_stage
-        # TODO: Undeploy should deploy more than just the Lambda function including the S3 bucket etc.?
+        zappa_undeploy
         ;;
     status)
         zappa_settings

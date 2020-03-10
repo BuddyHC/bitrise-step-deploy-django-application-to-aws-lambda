@@ -10,33 +10,45 @@ convert_input_envs_to_lower_case () {
     done
 }
 
+# Gets the Python runtime version from `Pipfile`
+#
+# string path to `Pipfile`
 get_runtime () {
-    python_version=$(cat $1 | grep python_version | grep -o '[0-9].[0-9]') #todo: version number could be more versatile
+    python_version=$(cat $1 | grep python_version | grep -o '[0-9].[0-9]') # TODO: version number could be more versatile
     echo "python${python_version}"
 }
 
 # Creates zappa settings json file
 #
-# e.g.: $(create_zappa_settings_json_file "zappa_settings.json"
+# e.g.: create_zappa_settings_json_file_shell "zappa_settings.json"
 create_zappa_settings_json_file () {
-    python > $1 << END
-from string import Template
-from os import environ as env
-
-t = '''{
+    # TODO: Replace the Python based zappa settings template with something more sophesticated and not requiring Python installed?
+    sed \
+    -e "s/\${\$input_stage}/"$input_stage"/" \
+    -e "s/\${\$input_project_name}/"$input_project_name"/" \
+    -e "s/\${\$input_runtime}/"$input_runtime"/" \
+    -e "s/\${\$input_django_settingse}/"$input_django_settings"/" \
+    > $1 << END
+{
     "$input_stage": {
         "project_name": "$input_project_name",
         "runtime": "$input_runtime",
         "django_settings": "$input_django_settings",
-        "s3_bucket": "zappa-$input_project_name"
+        "s3_bucket": "zappa-$input_project_name",
+        "exclude": [
+            "__pycache__",
+            ".git/*",
+            ".gitignore",
+            ".python-version",
+            "LICENSE",
+            "README.md",
+            "requirements.txt",
+            "zappa_settings.json"
+        ]
     }
-}'''
-
-s = Template(t)
-
-print(s.safe_substitute(env))
+}
 END
-# TODO: Replace the Python based zappa settings template with something more sophesticated?
+    echo $1
 }
 
 # Sanitizes a variable to be only within allowed characters of [a-zA-Z0-9_]

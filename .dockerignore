@@ -1,0 +1,5 @@
+# https://docs.docker.com/engine/reference/builder/#dockerignore-file
+.git
+.github
+Brewfile
+aws-iam-policy-for-zappa.json
