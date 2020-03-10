@@ -54,6 +54,7 @@ case $1 in
         ;;
     bats)
         (apk update && apk add bats jq) > /dev/null
+        cd /opt/action
         bats --tap bats
         ;;
     undeploy)

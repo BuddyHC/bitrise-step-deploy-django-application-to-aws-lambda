@@ -20,6 +20,7 @@ services:
     volumes:
       - ${input_app_dir}:/var/task
 
+  # This is a service that mimicks how Github runs the container so you
   github:
     build:
       context: .
@@ -30,6 +31,5 @@ services:
       - .:/opt/action:ro
       - ${input_app_dir:-./test-project}:/github/workspace:ro
     working_dir: /github/workspace
-    entrypoint: ""
-    command: bash
+
 

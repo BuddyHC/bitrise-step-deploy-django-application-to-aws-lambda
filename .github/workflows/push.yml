@@ -7,8 +7,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run bats unit tests
         run: |
-            #!/bin/bash
-            docker-compose run --rm zappa bats
+            docker-compose run --rm github bats
       - name: Test deploying to AWS Lambda
         env:
           input_app_dir: ./test-project
